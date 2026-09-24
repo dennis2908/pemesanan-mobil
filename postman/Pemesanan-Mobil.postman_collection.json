@@ -1,0 +1,163 @@
+{
+  "info": {
+    "_postman_id": "c0f5fdd1-0d3c-4e0b-a5d9-5cf3d2fbb001",
+    "name": "Pemesanan Mobil API",
+    "description": "API requests for the Laravel backend. Run Login first to store the JWT token.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8000" },
+    { "key": "token", "value": "" },
+    { "key": "noSim", "value": "" },
+    { "key": "password", "value": "" },
+    { "key": "userId", "value": "1" },
+    { "key": "roleId", "value": "1" },
+    { "key": "carId", "value": "1" },
+    { "key": "loanId", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const body = pm.response.json();",
+                  "if (body.token) pm.collectionVariables.set('token', body.token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"no_sim\": \"{{noSim}}\",\n  \"password\": \"{{password}}\"\n}"
+            },
+            "url": "{{baseUrl}}/api/user/login"
+          }
+        },
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nama\": \"Example User\",\n  \"alamat\": \"Example Address\",\n  \"no_telp\": \"08123456789\",\n  \"no_sim\": \"SIM-EXAMPLE-001\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": "{{baseUrl}}/api/user/register"
+          }
+        },
+        {
+          "name": "Check SIM",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/user/cek_sim/{{noSim}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Protected API",
+      "auth": {
+        "type": "bearer",
+        "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+      },
+      "item": [
+        {
+          "name": "List Users",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/user" }
+        },
+        {
+          "name": "List Roles",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/role" }
+        },
+        {
+          "name": "Create Role",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"role_name\": \"Staff\"\n}" },
+            "url": "{{baseUrl}}/api/role"
+          }
+        },
+        {
+          "name": "List Cars",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/manajemen" }
+        },
+        {
+          "name": "Search Cars",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"keyword\": \"Toyota\"\n}" },
+            "url": "{{baseUrl}}/api/manajemen/cariMobil"
+          }
+        },
+        {
+          "name": "Create Car",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"merk\": \"Toyota\",\n  \"model\": \"Avanza\",\n  \"no_plat\": \"B 1234 ABC\",\n  \"tarif\": 350000\n}"
+            },
+            "url": "{{baseUrl}}/api/manajemen"
+          }
+        },
+        {
+          "name": "List Loans",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/minjam" }
+        },
+        {
+          "name": "Create Loan",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tgl_mulai\": \"2026-10-01\",\n  \"tgl_akhir\": \"2026-10-03\",\n  \"m_mobil\": {{carId}}\n}"
+            },
+            "url": "{{baseUrl}}/api/minjam"
+          }
+        },
+        {
+          "name": "Check Car Availability",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"m_mobil\": {{carId}},\n  \"tgl_mulai\": \"2026-10-01\",\n  \"tgl_akhir\": \"2026-10-03\"\n}"
+            },
+            "url": "{{baseUrl}}/api/minjam/cekavail"
+          }
+        },
+        {
+          "name": "List Returns",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/kembali" }
+        },
+        {
+          "name": "Create Return",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": {{loanId}},\n  \"h_sewa\": 700000\n}"
+            },
+            "url": "{{baseUrl}}/api/kembali"
+          }
+        }
+      ]
+    }
+  ]
+}
